@@ -26,9 +26,9 @@ def scrape_info():
     soup = bs(html, "html.parser")
 
     # Retrieve the parent divs for all articles
-    results = soup.find_all('ul', class_='item_list')
-    news_title = result.find('div', class_="content_title").text
-    news_p = result.find('div', class_="article_teaser_body").text
+    results = soup.find('ul', class_='item_list')
+    news_title = results.find('div', class_="content_title").text
+    news_p = results.find('div', class_="article_teaser_body").text
 
     # Visit the url for JPL Featured Space Image
     # https://splinter.readthedocs.io/en/latest/elements-in-the-page.html
@@ -42,7 +42,7 @@ def scrape_info():
 
     # Scrape page into Soup
     html = browser.html
-    soup = bs(html, "html.parser")
+    image_soup = bs(html, "html.parser")
 
     # Use splinter to navigate the site and find the image url for the current Featured Mars Image and assign the url string to a variable called featured_image_url.
     # Make sure to find the image url to the full size .jpg image.
@@ -58,6 +58,7 @@ def scrape_info():
     df_tables = tables[0]
     df_tables.columns = ['Mars Facts', 'Measurements']
     df_tables = df_tables.set_index('Mars Facts')
+    df_tables_html = df_tables.to_html()
 
     # Visit the USGS Astrogeology site here to obtain high resolution images for each of Mar's hemispheres. You will need to click each of the links to the hemispheres in order to find the image url to the full resolution image.
     mars_hemispheres_url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
@@ -65,7 +66,7 @@ def scrape_info():
 
     # Scrape page into Soup
     hemispheres_html = browser.html
-    hemispheres_soup = BeautifulSoup(hemispheres_html, 'html.parser')
+    hemispheres_soup = bs(hemispheres_html, 'html.parser')
 
     # Retrieve the parent divs for all hemispheres
     results = hemispheres_soup.find_all('div', class_='item')
@@ -79,7 +80,7 @@ def scrape_info():
             # Scrape page into Soup to into image link
             browser.visit('https://astrogeology.usgs.gov'+ hemispheres_href)
             hemispheres_images_html = browser.html
-            hemispheres_images_soup = BeautifulSoup(hemispheres_images_html, 'html.parser')
+            hemispheres_images_soup = bs(hemispheres_images_html, 'html.parser')
 
             images_results = hemispheres_images_soup.find('div', class_='downloads')
             img_url = images_results.find('li').a['href']
@@ -96,8 +97,8 @@ def scrape_info():
         "news_title": news_title,
         "news_p": news_p,
         "featured_image_url": featured_image_url,
-        "df_tables": df_tables,
-        "hemisphere_image_urls": hemisphere_image_urls
+        "df_tables_html": df_tables_html,
+        "hemispheres_image_urls": hemispheres_image_urls
 
     }
 
