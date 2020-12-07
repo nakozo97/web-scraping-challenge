@@ -22,12 +22,23 @@
 
     <h2>Featured Mars Image</h2>
     <h4><b>{{ mars_data.featured_image_url }}</b></h4>
+    <img src="{{ mars_data.featured_image_url }}" alt="featured_image">
 
     <h2>Mars Facts</h2>
-    <h4><b>{{ mars_data.df_tables_html }}</b></h4>
+    <h4><b>{{ mars_data.df_tables_html | safe }}</b></h4>
 
   </div>
-  
+  <div class="container-fluid">
+    <h2>Mars Hemispheres</h2>
+    <h4><b>{{ mars_data.hemispheres_image_urls }}</b></h4>
+    {% for item in mars_data.hemispheres_image_urls %}
+    <div class="card" style="width: 20rem;">
+      <div class="card-body">
+        <img src="{{item['img_url']}}">
+        <h4 class="card-title">{{ item["hemispheres_title"] }}</h4>
+      </div>
+    </div>
+    {% endfor %}
   </div>
 </body>
 
